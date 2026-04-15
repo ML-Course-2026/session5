@@ -35,6 +35,12 @@ While APIs are convenient, direct interaction with models (often sourced from pl
 
 Understanding both API-based and direct model usage allows for informed decisions based on project requirements.
 
+<details>
+<summary><strong>Test Your Knowledge: APIs vs. Local Models</strong></summary>
+
+**Q: If you are building an application that handles highly sensitive medical records that legally cannot leave your company's servers, should you use an API like Gemini or a local model?**<br>
+**A:** You should use a local model. Sending sensitive data to an external API (like Google's or OpenAI's) often violates strict data privacy regulations unless specific enterprise agreements are in place. Local models ensure the data never leaves your infrastructure.
+</details>
 
 ---
 ## Setup and Initialization
@@ -96,10 +102,10 @@ client = genai.Client(api_key=GOOGLE_API_KEY)
 
 ### Choose a model
 
-Now choose a model. The Gemini API offers different models that are optimized for specific use cases, for more information check [Gemini models](https://ai.google.dev/gemini-api/docs/models)
+Now choose a model. The Gemini API offers different models that are optimized for specific use cases, for more information check[Gemini models](https://ai.google.dev/gemini-api/docs/models)
 
 ```python
-MODEL_ID = "gemini-2.5-flash" # @param ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}
+MODEL_ID = "gemini-2.5-flash" # @param["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}
 ```
 
 *   **Explanation:** The Gemini family includes several models optimized for different tasks, performance levels, and input modalities. This line selects which specific model variant we want to use for our requests. `gemini-2.5-flash` is chosen here as a generally capable and efficient model. Other options like `gemini-3.1-flash-lite-preview` offer different features or performance characteristics. The model ID is stored in the `MODEL_ID` variable for easy reference in later API calls. The comment `# @param ...` enables an interactive dropdown menu in Colab for selecting the model.
@@ -171,6 +177,13 @@ gr.Interface(
         -   `outputs=gr.Markdown(...)`: Defines the output area, specifying that the returned text should be rendered as Markdown.
         -   `title`, `description`: Set the UI titles.
     -   `.launch()`: Starts the interactive Gradio web server and displays the UI. This allows users to interact with the Gemini model through a simple form instead of just running code cells.
+
+<details>
+<summary><strong>Concept Check: How Gradio Connects to Functions</strong></summary>
+
+**Q: How does Gradio know to pass the text from `gr.Textbox` into the `prompt` variable in the `ask_model` function?**<br>
+**A:** Gradio maps the list of `inputs` directly to the arguments of the function specified in `fn`, in order. Because `gr.Textbox` is the only input defined, whatever the user types there is passed as the first (and only) argument (`prompt`) to the `ask_model` function. Whatever `ask_model` returns is then sent to the `outputs` component.
+</details>
 
 ## Send Multimodal Prompts
 
@@ -264,6 +277,13 @@ gr.Interface(
     -   The rest of the function calls `generate_content` with the image and text, returning the generated text to be displayed in the `gr.Markdown` output component.
     -   *(Note on Scope):* While this example successfully uses Gradio for *image input*, recall the earlier point: reliably displaying *generated* images or audio from the model within Gradio *output* components can be complex and is considered outside the core scope of the required lab exercises. We focus on text/Markdown output for simplicity.
 
+<details>
+<summary><strong>Deep Dive: Gradio Image Types</strong></summary>
+
+**Q: What happens if we don't include `type="pil"` in `gr.Image()`?**<br>
+**A:** By default, Gradio passes images to your function as a NumPy array (a grid of numbers representing pixel values). While useful for OpenCV or strict machine learning matrix operations, the `google-genai` SDK is designed to easily accept `PIL.Image` objects directly. Using `type="pil"` tells Gradio to convert the user's uploaded image into a PIL object automatically, saving you the trouble of converting a NumPy array back into an image format that Gemini understands.
+</details>
+
 ## Configure Model Parameters
 
 API calls can include parameters to control the generation process.
@@ -356,10 +376,14 @@ gr.Interface(
     *   The `generate_response` function now takes the prompt and all the configuration parameters as arguments. These will come from the corresponding Gradio input components.
     *   Inside the function, it constructs the `GenerateContentConfig` object using the values passed from the UI. Note the type conversions (e.g., `float()`, `int()`) as Gradio inputs might be strings or floats that need to match the types expected by `GenerateContentConfig`.
     *   The `gr.Interface` uses various input components like `gr.Slider` and `gr.Number` to provide intuitive controls for the numerical parameters.
-    * More about [top-p](https://rentry.co/samplers#top-p)
-    * More about [top-k](https://rentry.co/samplers#top-k)
+    * More about[top-p](https://rentry.co/samplers#top-p)
+    * More about[top-k](https://rentry.co/samplers#top-k)
 
+<details>
+<summary><strong>Code Hint: Handling Variable Types in Gradio</strong></summary>
 
+Notice in the code above that we explicitly cast variables, such as `float(temperature)` or `int(top_k)`. Gradio inputs generally return numerical data if configured as Sliders or Numbers, but explicitly casting them in your function is a defensive programming best practice. It ensures the API receives exactly the data type it expects, preventing runtime crashes.
+</details>
 
 ## Configure Safety Filters
 
@@ -374,7 +398,7 @@ prompt = """
 
 # Define safety settings configuration
 # Example: Block only high-probability dangerous content
-safety_settings = [
+safety_settings =[
     types.SafetySetting(
         category="HARM_CATEGORY_DANGEROUS_CONTENT",
         threshold="BLOCK_ONLY_HIGH",
@@ -506,6 +530,13 @@ gr.Interface(
     *   The `chat_with_assistant` function takes the system instruction, user prompt, and temperature from the UI.
     *   **Important Limitation:** As noted in the comments and description, this simple Gradio implementation creates a *new chat session* every time the user submits a prompt. It does not maintain conversation history between interactions in the UI. A true chatbot UI in Gradio would require state management (`gr.State`) to keep track of the `chat` object and its history across multiple turns. This example focuses only on demonstrating the passing of system instructions and single-turn interaction via Gradio.
 
+<details>
+<summary><strong>Test Your Knowledge: Gradio State and Chat History</strong></summary>
+
+**Q: Why doesn't the model remember my previous question in the Gradio example above, even though we are using `client.chats.create()`?**<br>
+**A:** Gradio interfaces are "stateless" by default. Every time you click the submit button, Gradio executes the `chat_with_assistant` function from top to bottom entirely fresh. It creates a brand-new `chat` object, sends your single message, returns the text, and then that `chat` object is deleted from memory. To build a continuous chatbot in Gradio, you would need to use `gr.State` or `gr.ChatInterface` to save the history between button clicks.
+</details>
+
 -----
 
 ## Generate JSON (Structured Output)
@@ -581,7 +612,7 @@ def get_recipe(prompt):
             recipe_data = json.loads(response.text)
             formatted = f"### {recipe_data.get('recipe_name', 'N/A')}\n\n" \
                         f"**Description:** {recipe_data.get('recipe_description', 'N/A')}\n\n" \
-                        f"**Ingredients:**\n" + "\n".join(f"- {item}" for item in recipe_data.get('recipe_ingredients', []))
+                        f"**Ingredients:**\n" + "\n".join(f"- {item}" for item in recipe_data.get('recipe_ingredients',[]))
             return formatted
         except Exception as parse_error:
             # If parsing fails, return the raw text with a warning
@@ -607,6 +638,13 @@ gr.Interface(
     *   After receiving the `response.text` (which should be a JSON string), it attempts to parse this JSON using `json.loads()`.
     *   If parsing is successful, it extracts the data and formats it into a human-readable Markdown string for display in the `gr.Markdown` output component.
     *   Error handling is included for both API call failures and JSON parsing failures.
+
+<details>
+<summary><strong>Deep Dive: JSON Parsing in Python</strong></summary>
+
+**Q: What exactly does `json.loads(response.text)` do in the code above?**<br>
+**A:** When the Gemini API returns a JSON response, it is delivered as one giant string of text (e.g., `"{ 'recipe_name': 'Cookies' }"`). You cannot programmatically access the data inside a string using python dictionary logic. `json.loads()` (Load String) takes that string and converts it into a native Python dictionary. This allows you to extract specific values later using `.get('recipe_name')`. The inner `try/except` block is a safety net: if the model hallucinates and returns broken JSON, `json.loads` will crash, but the `except` block catches it and displays the raw text instead of breaking the app.
+</details>
 
 ### Additional JSON / Pydantic Examples
 
@@ -686,7 +724,7 @@ def summarize_actions(meeting_notes):
 notes = "Project Alpha Sync:\n- Design team (Alice) to finalize mockups by Friday.\n- Bob needs to send client the report EOD.\n- Review budget next week (Contact: Carol)."
 json_output = summarize_actions(notes)
 print(json_output)
-# Expected structure: {"summary": "...", "action_items": [{"task": "Finalize mockups", "assignee": "Alice/Design team", "due_date": "Friday"}, ...]}
+# Expected structure: {"summary": "...", "action_items":[{"task": "Finalize mockups", "assignee": "Alice/Design team", "due_date": "Friday"}, ...]}
 ```
 *   **Use Case:** Processing meeting minutes or project updates to automatically generate task lists. Pydantic is generally recommended for complex schemas, but raw JSON schema dictionaries are also supported. -->
 
@@ -738,8 +776,7 @@ import io # For handling byte streams for images
 from PIL import Image as PILImage
 
 # Select a model capable of image generation (often experimental or specific versions)
-# e.g., "gemini-1.5-flash-latest" or check documentation for current models
-IMAGE_GEN_MODEL = "gemini-2.0-flash-exp" # Update if needed
+IMAGE_GEN_MODEL = "gemini-3.1-flash-lite-preview" # Update if needed
 
 prompt = 'Create a 3d rendered image of a cat astronaut planting a flag on a cheese moon.'
 
@@ -794,7 +831,7 @@ import gradio as gr
 
 def generate_text_and_image(prompt):
     # Select appropriate model
-    IMAGE_GEN_MODEL = "gemini-2.0-flash-exp" # Update if needed
+    IMAGE_GEN_MODEL = "gemini-3.1-flash-lite-preview" # Update if needed
     config = types.GenerateContentConfig(
         response_modalities=['Text', 'Image']
     )
@@ -925,6 +962,13 @@ gr.Interface(
     *   Inside the loop, it accumulates the response text in `full_response`.
     *   `yield full_response`: Instead of returning once at the end, it yields the current state of `full_response` after each chunk is received. Gradio's `gr.Textbox` output component automatically updates its content each time the function yields a value. This creates the effect of the text appearing incrementally in the UI.
 
+<details>
+<summary><strong>Concept Check: Return vs. Yield in Python/Gradio</strong></summary>
+
+**Q: Why do we use `yield` instead of `return` in this streaming Gradio example?**<br>
+**A:** A standard `return` statement immediately terminates a function and hands back a single, final output. `yield` turns a Python function into a *generator*. It hands back a value, pauses the function, and waits to be called again to generate the next value. Gradio is specifically designed to recognize generators. When it sees `yield`, it keeps the web interface connection open and visually updates the text box every single time a new `yield` is executed, creating the typewriter "streaming" effect.
+</details>
+
 ## Upload Files (File API)
 
 For larger files or files used repeatedly, the File API allows uploading them first and then referencing them in prompts. This is often necessary for multimodal inputs beyond small, directly included images.
@@ -937,10 +981,20 @@ The process generally involves:
 3.  Waiting for the file state to become `ACTIVE` (especially important for video).
 4.  Passing the `File` object (or its `uri`) in the `contents` list when calling `generate_content`.
 
+<details>
+<summary><strong>Test Your Knowledge: The File API vs. Direct Uploads</strong></summary>
+
+**Q: Earlier in the Multimodal section, we sent an image directly to `generate_content()`. Why do we need a separate `client.files.upload()` API now?**<br>
+**A:** Sending a file directly in `generate_content` (passing the raw bytes or PIL image) works fine for small, single images. However, the API has payload size limits. For massive text files, large PDFs, hour-long audio files, or video files, sending the raw data inside the prompt is impossible or highly inefficient. `client.files.upload` uploads the file to Google's servers *first*, giving you a temporary link (`URI`). You then send just that lightweight link in your prompt.
+</details>
+
 ### Upload an Image File
 
 ```python
 # Assume necessary imports: requests, pathlib, client, MODEL_ID, Markdown
+import requests # To download the image
+import pathlib # To handle file paths
+from PIL import Image # To work with the image object
 
 # 1. Prepare the file
 IMG_URL = "https://storage.googleapis.com/generativeai-downloads/data/jetpack.png"
@@ -1288,8 +1342,8 @@ This covers the primary methods for interacting with the Gemini API client for t
 ---
 ## Useful Links
 
-- [https://ai.google.dev/gemini-api/docs/file-prompting-strategies](https://ai.google.dev/gemini-api/docs/file-prompting-strategies)
-- [Gemini API: Getting started with Gemini 2.](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Get_started.ipynb)
+-[https://ai.google.dev/gemini-api/docs/file-prompting-strategies](https://ai.google.dev/gemini-api/docs/file-prompting-strategies)
+-[Gemini API: Getting started with Gemini 2.](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Get_started.ipynb)
 - [Gemini API: Authentication Quickstart](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Authentication.ipynb)
 - [Gemini Models](https://ai.google.dev/gemini-api/docs/models) 
 - [Gemini QuickStart](https://ai.google.dev/gemini-api/docs/quickstart?lang=python) 
@@ -1297,6 +1351,5 @@ This covers the primary methods for interacting with the Gemini API client for t
 
 
 <!-- 
-- [How to train a new language model from scratch using Transformers and Tokenizers](https://huggingface.co/blog/how-to-train)  
+-[How to train a new language model from scratch using Transformers and Tokenizers](https://huggingface.co/blog/how-to-train)  
 -->
- 

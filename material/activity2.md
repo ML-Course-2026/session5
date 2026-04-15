@@ -20,6 +20,13 @@ You can [create](https://aistudio.google.com/app/apikey) your API key using Goog
 
 **Important:** Treat your API key like a password. Do not share it publicly or commit it to version control systems like GitHub.
 
+<details>
+<summary><strong>Concept Check: Why are API Keys so sensitive?</strong></summary>
+
+**Q: What is the worst that can happen if I accidentally upload my API key to GitHub?**<br>
+**A:** Automated bots scrape public GitHub repositories 24/7 looking for exposed API keys. If they find yours, they can use your account to run massive, expensive computing jobs (like generating thousands of images or running automated bots). Because the key is tied to your account, you (or your organization) are financially responsible for the computing bill. This is why tools like Colab Secrets or `.env` files are mandatory best practices.
+</details>
+
 ### 1.2 Add your key to Colab Secrets
 
 Using Colab Secrets is the recommended way to handle your API key securely within Google Colab.
@@ -82,7 +89,7 @@ Retrieve your API key from Colab Secrets and use it to create the Gemini client 
     print("Gemini Client initialized.")
 
     # Choose a model ID to use for subsequent requests
-    MODEL_ID = "gemini-2.5-flash" # @param ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    print(f"Using Model ID: {MODEL_ID}")
+    MODEL_ID = "gemini-2.5-flash" # @param["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    
     print(f"Using Model ID: {MODEL_ID}")
     ```
     *(Explanation: This code gets your secret key, uses it to create the `client` object which is your main tool for talking to Gemini, and sets a default `MODEL_ID` variable.)*
@@ -110,7 +117,7 @@ try:
     print("Successfully initialized Gemini Client.")
 
     # Choose a model (only if client was initialized)
-    MODEL_ID = "gemini-2.5-flash" # @param ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    print(f"Using Model ID: {MODEL_ID}")
+    MODEL_ID = "gemini-2.5-flash" # @param["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    print(f"Using Model ID: {MODEL_ID}")
 
 # Catch any exception during the process
 except Exception as e:
@@ -145,7 +152,7 @@ Explore sending simple text prompts and displaying responses.
 
 ```python
 # Assumes 'client' was initialized successfully in the previous step.
-prompt = "What is the capital of France?"
+prompt = "What is the capital of Finland?"
 response = client.models.generate_content(
     model=MODEL_ID,
     contents=prompt
@@ -154,6 +161,13 @@ print(f"Prompt: {prompt}")
 print(f"Response:\n{response.text}")
 ```
 
+</details>
+
+<details>
+<summary><strong>📡 Concept Check: Under the Hood of an API Call</strong></summary>
+
+**Q: What is actually happening when you run `generate_content`? Does the model live on your computer?**<br>
+**A:** No, the model lives on massive servers in Google's data centers. When you call this function, the Python SDK takes your text, packages it into an HTTP Request (specifically a JSON payload), and sends it over the internet to Google. Google's servers run the complex neural network calculations, generate the text, and send an HTTP Response back to your notebook. This is why an active internet connection is strictly required for this lab.
 </details>
 
 ### Task 2.2: Text Prompt with Gradio
@@ -214,7 +228,7 @@ Explore sending prompts that include both images and text.
 ```python
 # Assumes 'client' was initialized successfully.
 # Example Image URL (replace with your own if desired)
-IMAGE_URL = "https://storage.googleapis.com/generativeai-downloads/images/pixel.png" # Google Pixel phone
+IMAGE_URL = "https://storage.googleapis.com/generativeai-downloads/cli/oak_tree_story/scene1.png" # Google Pixel phone
 
 # Download and open image
 img_bytes = requests.get(IMAGE_URL).content
@@ -238,6 +252,13 @@ print(f"Response:\n{response.text}")
 
 ```
 
+</details>
+
+<details>
+<summary><strong>Concept Check: How does an LLM "see" an image?</strong></summary>
+
+**Q: A language model is built to predict text. How can it process an image?**<br>
+**A:** Multimodal models like Gemini use a specialized vision encoder. Before the data reaches the core text generation model, the image is passed through a neural network (like a Convolutional Neural Network or Vision Transformer) that converts the pixels into mathematical vectors (embeddings) that occupy the same "mathematical space" as words. To the core model, the image simply looks like a very long string of highly descriptive, mathematically encoded "words."
 </details>
 
 ### Task 3.2: Image Analysis with Gradio
@@ -330,6 +351,15 @@ print(f"--- Response (Temperature: 0.9) ---\n{response_high.text}\n")
 
 </details>
 
+<details>
+<summary><strong>Concept Check: The Math of Temperature</strong></summary>
+
+**Q: Does increasing temperature make the model "smarter"?**<br>
+**A:** No. An LLM works by calculating the probability of every possible next word. For example, after the phrase "The sky is", the model might calculate "blue" (90%), "dark" (5%), "falling" (1%). 
+*   A **low temperature** (e.g., 0.1) makes the math "sharper"—the model almost exclusively picks the highest probability word (blue), leading to predictable, safe, and factual answers.
+*   A **high temperature** (e.g., 0.9) "flattens" the probabilities, giving the lower-probability words a fair chance of being selected. This leads to more varied, surprising, and creative text, but increases the risk of hallucinations.
+</details>
+
 ### Task 4.2: Parameter Control with Gradio
 
 1.  Use the Gradio example from the lecture/notebook that allows controlling `temperature`, `max_output_tokens`, and potentially `top_k` or `top_p` via sliders/number inputs.
@@ -420,6 +450,13 @@ print(f"Assistant:\n{response2.text}\n")
 
 </details>
 
+<details>
+<summary><strong>Concept Check: Does the Model have Memory?</strong></summary>
+
+**Q: How does the model remember what we said in `msg1` when we ask `msg2`? Does it learn in real-time?**<br>
+**A:** LLMs are stateless; they do not "learn" or permanently memorize your conversation. When you use `chat.send_message()`, the Google GenAI SDK silently takes your entire conversation history (msg1 + response1 + msg2) and sends the *entire transcript* back to the model in a single massive payload. The model reads the whole script from the top every single time you press enter. This is why conversations eventually hit a "context length" limit if they go on too long!
+</details>
+
 **Group Discussion:** How does the `chat` object help maintain context? Discuss the limitation of the simple Gradio chat example provided in the lecture (it starts a new chat each time).
 
 ## Part 6: Structured Output (JSON)
@@ -466,6 +503,13 @@ print(f"Parsed Data:\nName: {data.get('name')}\nCountry: {data.get('country')}\n
 
 ```
 
+</details>
+
+<details>
+<summary><strong>Concept Check: Why use Pydantic?</strong></summary>
+
+**Q: We can just ask the model to "Return JSON format" in the text prompt. Why go through the trouble of importing Pydantic and building a class?**<br>
+**A:** Relying purely on natural language instructions for JSON is risky; the model might misspell keys, change data types (returning a string `"1000"` instead of an integer `1000`), or add conversational fluff before the JSON block. Passing a Pydantic schema forces the API at the system level to mathematically constrain its token generation strictly to your defined structure and data types, virtually guaranteeing a perfect parse for your application.
 </details>
 
 ### Task 6.2: JSON Output with Gradio
@@ -556,6 +600,13 @@ print("\n---\nEnd of stream.")
 
 ```
 
+</details>
+
+<details>
+<summary><strong>Concept Check: User Experience & Streaming</strong></summary>
+
+**Q: Does using `generate_content_stream` make the model compute the answer faster?**<br>
+**A:** No, the total time required to generate 500 words is exactly the same. However, streaming vastly improves *Perceived Latency*. Instead of a user staring at a loading spinner for 10 seconds before reading a massive wall of text, streaming allows them to begin reading the first sentence within 1 second while the rest is being calculated. 
 </details>
 
 ### Task 7.2: Streaming with Gradio
@@ -668,6 +719,13 @@ print(f"\nSummary Response:\n{response.text}")
 
 </details>
 
+<details>
+<summary><strong>Concept Check: Why wait for PROCESSING?</strong></summary>
+
+**Q: In the code above, we use a `while` loop with `time.sleep()`. Why doesn't the file just upload instantly?**<br>
+**A:** When you upload an image, it usually is ready (`ACTIVE`) immediately. But when you upload large PDFs or videos, Google's servers must run preprocessing algorithms—such as Optical Character Recognition (OCR) to extract text, or frame-by-frame analysis for video extraction. This takes compute time. If you immediately request a summary while the state is `PROCESSING`, the API will return an error because the file isn't ready to be read by the LLM yet.
+</details>
+
 **Group Discussion:** Besides PDFs, what other file types were shown in the lecture that can be processed using the File API? Discuss why using the File API is preferred for larger files compared to embedding them directly in the prompt (if even possible).
 
 ## Part 9: Instruct Prompting Practice
@@ -695,6 +753,12 @@ print(f"Response:\n{response.text}")
 
 ```
 
+</details>
+
+<details>
+<summary><strong>Prompting Concept: Zero-Shot vs Few-Shot</strong></summary>
+
+The prompt above is an example of **Zero-Shot Prompting**. You provided instructions, but you did not provide any examples of the correct format before asking the question. If you wanted the model to format answers in a highly specific, quirky way, you could use **Few-Shot Prompting** by providing 2 or 3 examples directly in your text prompt before asking your real question. This helps "tune" the model's behavior contextually.
 </details>
 
 ### Task 9.2: Improving Specificity and Format
@@ -821,4 +885,3 @@ except Exception as e:
 While not required for completing this lab, incorporating `try...except` blocks is a standard practice for writing more reliable and user-friendly applications that interact with external services or process potentially unpredictable data.
 
 <!-- You should consider adding it when building your final project code. Here's a [demo](./activity1-v1.md). -->
-
