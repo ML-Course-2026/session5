@@ -36,7 +36,7 @@ Now, write and execute the Python code to install the necessary library and set 
 
 1.  **Install the SDK:** Run the following command in a code cell.
     ```python
-    %pip install -U -q google-genai gradio
+    %pip install -q google-genai gradio
     ```
     *(Explanation: This installs the Google GenAI SDK and the Gradio library.)*
 
@@ -82,7 +82,7 @@ Retrieve your API key from Colab Secrets and use it to create the Gemini client 
     print("Gemini Client initialized.")
 
     # Choose a model ID to use for subsequent requests
-    MODEL_ID = "gemini-2.0-flash" # Other models: "gemini-1.5-flash-latest","gemini-2.0-flash-lite","gemini-2.0-flash","gemini-2.5-pro-exp-03-25"
+    MODEL_ID = "gemini-2.5-flash" # @param ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    print(f"Using Model ID: {MODEL_ID}")
     print(f"Using Model ID: {MODEL_ID}")
     ```
     *(Explanation: This code gets your secret key, uses it to create the `client` object which is your main tool for talking to Gemini, and sets a default `MODEL_ID` variable.)*
@@ -110,8 +110,7 @@ try:
     print("Successfully initialized Gemini Client.")
 
     # Choose a model (only if client was initialized)
-    MODEL_ID = "gemini-2.0-flash" # Other models: "gemini-1.5-flash-latest","gemini-2.0-flash-lite","gemini-2.0-flash","gemini-2.5-pro-exp-03-25"
-    print(f"Using Model ID: {MODEL_ID}")
+    MODEL_ID = "gemini-2.5-flash" # @param ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite-preview"] {"allow-input":true, isTemplate: true}    print(f"Using Model ID: {MODEL_ID}")
 
 # Catch any exception during the process
 except Exception as e:
