@@ -769,7 +769,7 @@ These foundational concepts are applicable across various deep learning tasks. F
 
 Understanding the principles covered in this material is essential before delving into these more advanced architectures.
 
-
+----
 <details>
 <summary><strong>Essential Additions: Scaling, Evaluation, and Architecture</strong></summary>
 

@@ -392,6 +392,7 @@ Early stopping is a practical and efficient way to control training and improve 
 > [!TIP]
 > Here's the [complete code](./src/part2.py)
 
+----
 
 <details>
 <summary><strong>Evaluation and Bonus Challenges</strong></summary>

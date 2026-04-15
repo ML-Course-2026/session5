@@ -888,6 +888,7 @@ except Exception as e:
 
 While not required for completing this lab, incorporating `try...except` blocks is a standard practice for writing more reliable and user-friendly applications that interact with external services or process potentially unpredictable data.
 
+----
 
 <details>
 <summary><strong>Capstone and Robustness</strong></summary>

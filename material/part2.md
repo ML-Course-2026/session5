@@ -1352,6 +1352,7 @@ This covers the primary methods for interacting with the Gemini API client for t
 - [Gemini QuickStart](https://ai.google.dev/gemini-api/docs/quickstart?lang=python) 
 - [Free images](https://unsplash.com/images/stock/public-domain) 
 
+----
 
 <details>
 <summary><strong>Deep Dive: Nuances of the Gemini API</strong></summary>
