@@ -45,7 +45,7 @@
 
 ---
 
-### Part 2: Deep Learning
+### Part 1: Deep Learning
 
 - Fundamentals of Deep Learning with Keras
   - Deep learning vs MLP
@@ -57,12 +57,10 @@
 
 ---
 
-### Part 1: 
+### Part 2: AI Applications
 
-- AI Applications
-  - How to interact with Gemini models via API  
-  - Key differences compared to Hugging Face models  
-  - Preparing for Phase 2 of the mini project  
+- How to interact with Gemini models via API  
+- Preparing for Phase 2 of the mini project  
 - [Summary: Key Points and Takeaways](./material/part2.md)
 - [Activity 1](./material/activity2.md)
 
