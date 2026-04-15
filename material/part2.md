@@ -1340,18 +1340,6 @@ This covers the primary methods for interacting with the Gemini API client for t
 </details>
 
 
-
-
----
-## Useful Links
-
--[https://ai.google.dev/gemini-api/docs/file-prompting-strategies](https://ai.google.dev/gemini-api/docs/file-prompting-strategies)
--[Gemini API: Getting started with Gemini 2.](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Get_started.ipynb)
-- [Gemini API: Authentication Quickstart](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Authentication.ipynb)
-- [Gemini Models](https://ai.google.dev/gemini-api/docs/models) 
-- [Gemini QuickStart](https://ai.google.dev/gemini-api/docs/quickstart?lang=python) 
-- [Free images](https://unsplash.com/images/stock/public-domain) 
-
 ----
 
 <details>
@@ -1396,6 +1384,19 @@ When you build a software application, you cannot rely on an LLM to reliably ret
 **A:** The API will throw an exception (typically a `429 Too Many Requests` error). In production code, you should wrap your `generate_content` calls in `try...except` blocks and implement "exponential backoff" (waiting a few seconds and retrying automatically) to ensure your application doesn't crash when the API is temporarily overwhelmed.
 
 </details>
+
+
+---
+## Useful Links
+
+-[https://ai.google.dev/gemini-api/docs/file-prompting-strategies](https://ai.google.dev/gemini-api/docs/file-prompting-strategies)
+-[Gemini API: Getting started with Gemini 2.](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Get_started.ipynb)
+- [Gemini API: Authentication Quickstart](https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Authentication.ipynb)
+- [Gemini Models](https://ai.google.dev/gemini-api/docs/models) 
+- [Gemini QuickStart](https://ai.google.dev/gemini-api/docs/quickstart?lang=python) 
+- [Free images](https://unsplash.com/images/stock/public-domain) 
+
+
 
 <!-- 
 -[How to train a new language model from scratch using Transformers and Tokenizers](https://huggingface.co/blog/how-to-train)  

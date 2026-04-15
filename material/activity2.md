@@ -893,6 +893,7 @@ While not required for completing this lab, incorporating `try...except` blocks 
 <details>
 <summary><strong>Capstone and Robustness</strong></summary>
 
+<br>
 To finish this lab, you will combine the concepts learned into a single, robust application.
 
 ### Task 11.1: Systematic Error Handling
