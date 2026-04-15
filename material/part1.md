@@ -770,6 +770,85 @@ These foundational concepts are applicable across various deep learning tasks. F
 Understanding the principles covered in this material is essential before delving into these more advanced architectures.
 
 
+<details>
+<summary><strong>Essential Additions: Scaling, Evaluation, and Architecture</strong></summary>
+
+<br>
+
+To complete your understanding of the Keras workflow, we must address how to prepare diverse data, how to interpret the model's architecture, and how to measure success after training.
+
+### 6.1 The Importance of Feature Scaling
+
+In our Cereal dataset, the features have vastly different ranges (e.g., `sodium` might be in the hundreds, while `fat` is in single digits). Neural networks learn by multiplying inputs by weights. If one feature is numerically much larger than others, it can dominate the learning process, leading to slow convergence or poor performance.
+
+**Feature Scaling** standardizes these ranges. A common method is standardizing data to have a mean of 0 and a standard deviation of 1 using Scikit-Learn's `StandardScaler`.
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+# Initialize the scaler
+scaler = StandardScaler()
+
+# Fit the scaler ONLY on the training data, then transform it
+X_train_scaled = scaler.fit_transform(cereal_X_train)
+
+# Transform the testing data using the SAME scaler
+X_test_scaled = scaler.transform(cereal_X_test)
+```
+*Note: We highly recommend applying this step to your data before passing it into `model.fit()`.*
+
+### 6.2 Understanding Output Layer Activations
+
+We previously noted that the final layer for a regression task uses `Dense(1)` without specifying an activation function, which defaults to a **linear activation** (`f(x) = x`). 
+
+Why is this important? If we mistakenly used `activation='sigmoid'` on the final layer, the model's output would be strictly constrained to values between 0.0 and 1.0. If we are trying to predict a house price of $500,000, or a cereal rating of 50.5, a sigmoid layer physically cannot output that number. Linear activation ensures the network can output any continuous number, negative or positive.
+
+### 6.3 Reading `model.summary()`
+
+When you execute `model.summary()`, Keras outputs a table detailing your architecture. Here is an example of what it looks like:
+
+```text
+Model: "Cereal_Rating_Predictor"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ Hidden_Layer_1 (Dense)      (None, 64)                640       
+                                                                 
+ Hidden_Layer_2 (Dense)      (None, 32)                2080      
+                                                                 
+ Output_Layer (Dense)        (None, 1)                 33        
+                                                                 
+=================================================================
+Total params: 2753 (10.75 KB)
+Trainable params: 2753 (10.75 KB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+```
+*   **Output Shape:** `(None, 64)` means the layer outputs an array of 64 values. `None` represents the batch size, which is flexible during training.
+*   **Param #:** The number of weights and biases the network must learn for that layer.
+
+### 6.4 Evaluating and Predicting
+
+After training (`model.fit()`), you must test the model on the unseen test set to get an objective measure of its performance.
+
+```python
+# 1. Evaluate the model on test data
+loss, mae = model.evaluate(X_test_scaled, cereal_y_test, verbose=0)
+print(f"Test Set Mean Absolute Error: {mae:.2f}")
+
+# 2. Make predictions on new data
+predictions = model.predict(X_test_scaled[:3]) # Predict first 3 samples
+print(f"Predictions: {predictions.flatten()}")
+print(f"Actual values: {cereal_y_test[:3].values}")
+```
+
+**Concept Check: Evaluation vs. Validation**
+
+**Q: We already passed `validation_data` during `model.fit()`. Why do we need `model.evaluate()` at the end?**<br>
+**A:** If you use techniques like Early Stopping or manual hyperparameter tuning based on the validation set, the model indirectly "learns" from the validation data. To get a truly unbiased report card of your final model, you should ideally have a third, completely hidden dataset (the Test set) to run `model.evaluate()` on after all training and tuning is finalized.
+
+</details>
+
 ---
 ## Useful Links
 

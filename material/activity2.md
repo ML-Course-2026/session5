@@ -9,6 +9,10 @@
 *   The goal is understanding and experimentation, not just copying code. Discuss the results and any challenges encountered.
 *   If you get stuck on a task, refer to the solution provided within the `<details>` tag. Try to solve it first before looking.
 
+
+> [!NOTE]
+> When using the free tier of the Gemini API, you may occasionally encounter errors indicating that the service is overwhelmed or that rate limits have been reached (such as 429 Too Many Requests or 503 Service Unavailable). If your code fails with an API-related error, it is often a temporary issue. Wait a few moments and try executing the cell again.
+
 ## Part 1: Setup and Initialization
 
 This section ensures your environment is correctly configured to use the Gemini API. Follow these steps carefully.
@@ -883,5 +887,121 @@ except Exception as e:
 ```
 
 While not required for completing this lab, incorporating `try...except` blocks is a standard practice for writing more reliable and user-friendly applications that interact with external services or process potentially unpredictable data.
+
+
+<details>
+<summary><strong>Capstone and Robustness</strong></summary>
+
+To finish this lab, you will combine the concepts learned into a single, robust application.
+
+### Task 11.1: Systematic Error Handling
+
+When working with APIs, especially on free tiers, network timeouts and rate limits (`429 Too Many Requests`) are common. 
+
+**Task:** Rewrite the basic text generation function from Task 2.2 to include a `try...except` block. This ensures that if the API fails, the Gradio app displays a friendly error message instead of crashing.
+
+**Solution Code**
+
+```python
+def robust_ask_gemini(user_prompt):
+    if not user_prompt:
+        return "Please enter a prompt."
+        
+    try:
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=user_prompt
+        )
+        return response.text
+    except Exception as e:
+        # Returns a user-friendly string instead of crashing the UI
+        return f"⚠️ An error occurred while communicating with the API. Please wait a moment and try again.\n\nError details: {str(e)}"
+
+# You can test this by temporarily providing an invalid MODEL_ID.
+```
+
+### Task 11.2: Multimodal to JSON Extraction
+
+Instead of trying to output generated images to Gradio (which can be complex), let's use multimodal input to generate structured data. 
+
+**Task:** 
+1. Define a Pydantic model called `ImageAnalysis` containing a `summary` (string) and a `list_of_objects` (list of strings).
+2. Create a function that takes a PIL Image as input.
+3. Pass the image to Gemini with the prompt "List the main objects in this image," forcing the output to match your JSON Pydantic schema.
+
+**Solution Code**
+
+```python
+class ImageAnalysis(BaseModel):
+    summary: str = Field(description="A brief summary of the image scene.")
+    list_of_objects: List[str] = Field(description="A list of distinct objects found in the image.")
+
+def extract_objects_from_image(image_input):
+    if image_input is None:
+        return "No image provided."
+        
+    config = types.GenerateContentConfig(
+        response_mime_type="application/json",
+        response_schema=ImageAnalysis
+    )
+    
+    try:
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=[image_input, "Analyze this image and list the objects."],
+            config=config
+        )
+        return response.text # Returns the raw JSON string safely
+    except Exception as e:
+        return f'{{"error": "{str(e)}"}}'
+```
+
+
+### Task 11.3: Final Synthesis Capstone UI
+
+**Task:** Build a comprehensive Gradio application that acts as a "Swiss Army Knife" for Gemini. 
+Your Gradio interface should include:
+*   **Inputs:** A Textbox (for the prompt), an Image upload component (optional input), and a Slider for Temperature.
+*   **Output:** A Markdown component for the response.
+*   **Logic:** Your function should check if an image is provided. If yes, perform a multimodal call. If no, perform a text-only call. The function must apply the chosen temperature and include a `try...except` block.
+
+**Solution Code**
+
+```python
+def capstone_gemini_app(prompt, image_input, temp):
+    if not prompt:
+        return "Please enter a prompt."
+        
+    config = types.GenerateContentConfig(temperature=float(temp))
+    
+    # Determine if request is multimodal or text-only based on image presence
+    request_contents =[image_input, prompt] if image_input is not None else prompt
+    
+    try:
+        response = client.models.generate_content(
+            model=MODEL_ID,
+            contents=request_contents,
+            config=config
+        )
+        return response.text
+    except Exception as e:
+        return f"**API Error:** {str(e)}"
+
+capstone_ui = gr.Interface(
+    fn=capstone_gemini_app,
+    inputs=[
+        gr.Textbox(label="Prompt", lines=3),
+        gr.Image(type="pil", label="Optional Image Input"),
+        gr.Slider(0.0, 1.0, value=0.5, step=0.1, label="Creativity (Temperature)")
+    ],
+    outputs=gr.Markdown(label="Response"),
+    title="Gemini Capstone Application",
+    description="Combine text, images, and parameter control in one robust interface."
+)
+capstone_ui.launch()
+```
+
+</details>
+
 
 <!-- You should consider adding it when building your final project code. Here's a [demo](./activity1-v1.md). -->

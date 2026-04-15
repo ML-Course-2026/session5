@@ -391,3 +391,59 @@ Early stopping is a practical and efficient way to control training and improve 
 
 > [!TIP]
 > Here's the [complete code](./src/part2.py)
+
+
+<details>
+<summary><strong>Evaluation and Bonus Challenges</strong></summary>
+
+<br>
+Now that you understand the training workflow and early stopping, let's complete the pipeline by evaluating the model and applying your knowledge to a new dataset.
+
+### **1. Interpreting Training Output and Evaluating**
+
+During training, Keras outputs a progress bar with metrics.
+`Epoch 10/100  64/64 [==============================] - 0s 2ms/step - loss: 12.34 - mae: 2.50 - val_loss: 14.10 - val_mae: 2.80`
+
+*   `loss` / `mae`: The error on the data the model is currently learning from.
+*   `val_loss` / `val_mae`: The error on the unseen validation data. This is the true measure of generalization.
+
+**Task:** Add the following code to the end of your Part 2 script to formally evaluate your best model and see actual predictions. 
+
+```python
+# Evaluate the model on the test data
+print("\n--- Final Model Evaluation ---")
+test_loss, test_mae = model.evaluate(cereal_X_test, cereal_y_test, verbose=0)
+print(f"Test MAE: {test_mae:.2f} rating points")
+
+# Verify restore_best_weights=True worked by checking if Test MAE matches 
+# the best val_mae seen during training.
+
+# Make a few predictions
+sample_predictions = model.predict(cereal_X_test[:5])
+print("\nSample Predictions vs Actual:")
+for i in range(5):
+    print(f"Predicted: {sample_predictions[i][0]:.2f} | Actual: {cereal_y_test.iloc[i]:.2f}")
+```
+
+### **2. The Concrete Dataset Challenge**
+
+In Part 1, we loaded a `concrete_data` dataset but never used it. 
+
+**Task:** Create a new code cell and build a complete pipeline for the concrete dataset from scratch. 
+1. Scale the features (`concrete_X_train` and `concrete_X_test`) using `sklearn.preprocessing.StandardScaler`.
+2. Build a `Sequential` model (experiment with layer sizes, e.g., 128 -> 64).
+3. Compile the model (use `mse` loss and `mae` metric).
+4. Train the model using `EarlyStopping` (set `epochs=200` to ensure early stopping has enough time to trigger).
+5. Evaluate the model and plot the loss curves.
+
+**Hint: Scaling Code**
+
+```python
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+concrete_X_train_scaled = scaler.fit_transform(concrete_X_train)
+concrete_X_test_scaled = scaler.transform(concrete_X_test)
+# Use these scaled variables in model.fit() and model.evaluate()
+```
+
+</details>
