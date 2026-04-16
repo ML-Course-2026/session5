@@ -1,6 +1,21 @@
 # Activity 1:
 
-There are 2 parts in this activity. 
+There are 2 parts in this activity and a refresher
+
+---
+
+## **Part 0 (Refresher): The Standard Machine Learning Pipeline**
+
+Most supervised learning projects follow a standardized workflow. Regardless of whether you are predicting spam emails or house prices, you will generally follow these 7 steps:
+
+1.  **Load Data:** Get the data into your Python environment (typically using the `pandas` library).
+2.  **Explore & Preprocess Data:** Clean the data, handle missing values, and convert text into numbers. 
+3.  **Split Data:** Divide the data into a **training set** (to teach the model) and a **testing set** (to evaluate the model on data it has never seen before).
+4.  **Choose & Create Model:** Select an appropriate algorithm (e.g., Decision Tree for classification, Linear Regression for regression).
+5.  **Train Model:** Fit the model to the **training data**. This is where the mathematical "learning" actually happens.
+6.  **Make Predictions:** Use the trained model to guess the outputs for the **testing data**.
+7.  **Evaluate Model:** Compare the model's guesses against the *actual* known answers in the testing data using scoring metrics.
+
 
 ---
 

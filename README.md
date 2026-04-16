@@ -53,7 +53,7 @@
   - Terminology: Underfitting, Overfitting,learning rate, parameters , hyper parameters
   - A Regression Example
 - [Summary: Key Points and Takeaways](./material/part1.md)
-- [Activity 2](./material/activity1.md)
+- [Activity 1](./material/activity1.md)
 
 ---
 
@@ -62,7 +62,7 @@
 - How to interact with Gemini models via API  
 - Preparing for Phase 2 of the mini project  
 - [Summary: Key Points and Takeaways](./material/part2.md)
-- [Activity 1](./material/activity2.md)
+- [Activity 2](./material/activity2.md)
 
 
 ----
