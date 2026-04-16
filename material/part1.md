@@ -22,10 +22,10 @@ While traditional ML models (like Random Forests or Linear Regression) perform e
 Several software libraries facilitate the development of deep learning models. Two prominent ones are:
 
 *   **TensorFlow & Keras:**
-    *   **TensorFlow:** Developed by Google, TensorFlow is a powerful open-source library for numerical computation and large-scale machine learning. It provides low-level APIs for fine-grained control but can be complex for beginners.
-    *   **Keras:** Keras is a high-level API for building and training neural networks. It emphasizes user-friendliness, modularity, and rapid experimentation. Keras can run on top of different backends, including TensorFlow (most common), Theano, or CNTK. We will use the `tensorflow.keras` implementation. Its ease of use makes it an excellent choice for both beginners and practitioners needing fast prototyping and deployment.
+    *   **[TensorFlow](https://www.tensorflow.org/):** Developed by Google, TensorFlow is a powerful open-source library for numerical computation and large-scale machine learning. It provides low-level APIs for fine-grained control but can be complex for beginners.
+    *   **[Keras](https://keras.io/):** Keras is a high-level API for building and training neural networks. It emphasizes user-friendliness, modularity, and rapid experimentation. Keras can run on top of different backends, including TensorFlow (most common), JAX, or PyTorch. We will use the `tensorflow.keras` implementation. Its ease of use makes it an excellent choice for both beginners and practitioners needing fast prototyping and deployment.
 
-*   **PyTorch/[Fastai](https://docs.fast.ai/):**
+*   **[PyTorch](https://pytorch.org)/[Fastai](https://docs.fast.ai/):**
     *   Developed by Facebook's AI Research lab (FAIR), PyTorch is another major open-source library. It is widely adopted, especially in the research community, and is known for its Pythonic feel, flexibility, and dynamic computation graphs (allowing network structure changes during runtime).
 
 **Focus:** This summary will utilize **Keras (specifically `tensorflow.keras`)** for all practical examples due to its clear syntax and streamlined workflow for common tasks.
@@ -84,7 +84,7 @@ Determining the optimal number of neurons (or units) in each hidden layer is mor
 
 *   **Powers of 2:** Common choices are 32, 64, 128, 256, 512, etc., partly for computational efficiency.
 *   **Funnel Structure:** Often, the number of neurons decreases in successive hidden layers (e.g., Input -> 128 -> 64 -> Output).
-*   **Simple Problems/Tabular Data:** Hidden layers might range from tens (e.g., 16, 32) to a few hundred neurons (e.g., 64, 128).
+*   **Simple Problems/Tabular Data:** Hidden layers might range from tens (e.g., 16, 32) to a few hundred neurons (e.g., 512).
 *   **Complex Problems (e.g., Image Models):** Later fully connected layers in models like CNNs might have 512, 1024, or more neurons.
 
 **Recommendation:** Start with a relatively simple architecture (e.g., 1-2 hidden layers with moderate neurons like 64 or 32) and gradually increase complexity if performance is insufficient, while monitoring for overfitting.
@@ -95,7 +95,9 @@ Activation functions introduce non-linearity into the network. Without them, sta
 
 <details>
 <summary><strong>Deep Dive: Why are non-linear activations necessary?</strong></summary>
+
 Imagine stacking multiple completely linear layers (e.g., just multiplying inputs by weights). Mathematically, `Layer2(Layer1(x))` where `Layer1(x) = W1*x` and `Layer2(y) = W2*y` simplifies to `W2*(W1*x) = (W2*W1)*x`. This is just a new single weight matrix applied to `x`. Without non-linearity, no matter how many layers you stack, the network acts exactly like a simple linear regression model and cannot solve complex, curved boundaries.
+
 </details>
 
 **Common Choices and Use Cases:**

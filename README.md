@@ -14,7 +14,7 @@
 
 ### Topics
 
-- Fundamentals of Deep Learning with Keras
+- Fundamentals of **Deep Learning** with Keras
 - AI Applications: Interacting with multimodal LLMs from the Gemini family
 
 ---
