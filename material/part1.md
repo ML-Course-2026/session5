@@ -153,6 +153,24 @@ If you change the batch size from 16 to 32 to see if the model trains faster, ar
 
 Let's apply these concepts to build and train a neural network using Keras. We will perform a regression task: predicting a continuous value. We will use the "Cereal" dataset (predicting cereal rating based on nutritional info) as the primary example. This section directly mirrors Activity 2, Part 1.
 
+
+<details>
+<summary><strong>(Refresher): The Standard Machine Learning Pipeline</strong></summary>
+
+
+Most supervised learning projects follow a standardized workflow. Regardless of whether you are predicting spam emails or house prices, you will generally follow these 7 steps:
+
+1.  **Load Data:** Get the data into your Python environment (typically using the `pandas` library).
+2.  **Explore & Preprocess Data:** Clean the data, handle missing values, and convert text into numbers. 
+3.  **Split Data:** Divide the data into a **training set** (to teach the model) and a **testing set** (to evaluate the model on data it has never seen before).
+4.  **Choose & Create Model:** Select an appropriate algorithm (e.g., Decision Tree for classification, Linear Regression for regression).
+5.  **Train Model:** Fit the model to the **training data**. This is where the mathematical "learning" actually happens.
+6.  **Make Predictions:** Use the trained model to guess the outputs for the **testing data**.
+7.  **Evaluate Model:** Compare the model's guesses against the *actual* known answers in the testing data using scoring metrics.
+
+
+</details>
+
 **3.1 Step 1: Setup & Environment**
 
 First, import the necessary libraries. Ensure you have `tensorflow` and `scikit-learn` installed (`pip install tensorflow scikit-learn pandas matplotlib`).
@@ -403,6 +421,12 @@ plt.show()
 
 <img src="./img/learning-curves.png" width="50%">
 
+<details>
+<summary><strong>Graph Analysis Practice</strong></summary>
+<br>
+Look at the rightmost graph in the image above ("Overfitting"). Notice how the blue line (Training Error) keeps going down, but the orange line (Validation Error) begins to rise after a certain point. This "U-shape" in the validation curve is the classic fingerprint of overfitting. The model is memorizing the training data at the expense of generalizability.
+</details>
+
 
 **4.2 Understanding Overfitting vs. Underfitting**
 
@@ -425,11 +449,6 @@ plt.show()
 
 <img src="./img/Underfitting-overfitting.png" width="50%">
 
-
-<details>
-<summary><strong>Graph Analysis Practice</strong></summary>
-Look at the rightmost graph in the image above ("Overfitting"). Notice how the blue line (Training Error) keeps going down, but the green line (Validation Error) begins to rise after a certain point. This "U-shape" in the validation curve is the classic fingerprint of overfitting. The model is memorizing the training data at the expense of generalizability.
-</details>
 
 
 **4.3 Regularization Technique: Early Stopping**
