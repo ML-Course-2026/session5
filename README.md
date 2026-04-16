@@ -63,6 +63,7 @@
 - Preparing for Phase 2 of the mini project  
 - [Summary: Key Points and Takeaways](./material/part2.md)
 - [Activity 2](./material/activity2.md)
+- [Demo](./material/structured-data.ipynb)
 
 
 ----
