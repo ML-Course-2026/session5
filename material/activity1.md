@@ -3,8 +3,10 @@
 There are 2 parts in this activity and a refresher
 
 ---
+<details>
+<summary><strong>(Refresher): The Standard Machine Learning Pipeline</strong></summary>
 
-## **Part 0 (Refresher): The Standard Machine Learning Pipeline**
+<br>
 
 Most supervised learning projects follow a standardized workflow. Regardless of whether you are predicting spam emails or house prices, you will generally follow these 7 steps:
 
@@ -15,7 +17,7 @@ Most supervised learning projects follow a standardized workflow. Regardless of 
 5.  **Train Model:** Fit the model to the **training data**. This is where the mathematical "learning" actually happens.
 6.  **Make Predictions:** Use the trained model to guess the outputs for the **testing data**.
 7.  **Evaluate Model:** Compare the model's guesses against the *actual* known answers in the testing data using scoring metrics.
-
+</details>
 
 ---
 
