@@ -5,7 +5,7 @@
 > - When submitting to OMA, please use the updated template. It includes a section to indicate each group member's contribution as a percentage.  
 
 
-- **Due Date:** 2026-04-20
+- **Due Date:** 2026-04-23
 - **Submission Method:** Google Drive
 
 **Objective:** To replace the mock functionality of your Phase 1 application concept with real logic that calls the Gemini API. You will demonstrate the use of instruct prompting, parameter tuning, and JSON structured output in your implementation.
